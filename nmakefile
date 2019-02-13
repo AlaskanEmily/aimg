@@ -1,0 +1,51 @@
+# Any copyright is dedicated to the Public Domain.
+# http://creativecommons.org/publicdomain/zero/1.0/ 
+
+all: aimg.dll
+
+CLFLAGS=/DAIMG_EXPORTS /nologo /I$(ROOTDIR)/include
+
+OBJECTS=image.obj wic.obj save_tga.obj load_tga.obj
+#OBJECTS=image.obj save_jpeg.obj save_png.obj load_png.obj save_tga.obj load_tga.obj
+
+image.obj: image.c image.h
+	cl $(CLFLAGS) /Foimage.obj /c image.c
+
+wic.obj: wic.cpp image.h
+	cl $(CLFLAGS) /Fowic.obj /c wic.cpp
+
+save_jpeg.obj: save_jpeg.c image.h
+	cl $(CLFLAGS) /Fosave_jpeg.obj /c save_jpeg.c
+
+save_png.obj: save_png.c image.h
+	cl $(CLFLAGS) /Fosave_png.obj /c save_png.c
+
+load_png.obj: load_png.c image.h
+	cl $(CLFLAGS) /Foload_png.obj /c load_png.c
+
+save_tga.obj: save_tga.c image.h
+	cl $(CLFLAGS) /Fosave_tga.obj /c save_tga.c
+
+load_tga.obj: load_tga.c image.h
+	cl $(CLFLAGS) /Foload_tga.obj /c load_tga.c
+
+aimg.dll: $(OBJECTS)
+	link /nologo /dll /out:aimg.dll /implib:aimg.lib $(OBJECTS) WindowsCodecs.lib Ole32.lib $(ROOTDIR)\lib\bufferfile.lib
+
+aimg_convert.obj: aimg_convert.c image.h
+	cl $(CLFLAGS) /Foaimg_convert.obj /c aimg_convert.c
+
+aimg_convert.exe: aimg.dll aimg_convert.obj
+	link /nologo aimg_convert.obj aimg.lib
+
+#aimg.dll: $(OBJECTS)
+#	link /nologo /dll /out:aimg.dll /implib:aimg.lib $(OBJECTS) $(ROOTDIR)\lib\jpeg.lib $(ROOTDIR)\lib\libpng16.lib $(ROOTDIR)\lib\zlib.lib $(ROOTDIR)\lib\bufferfile.lib
+
+clean:
+	del aimg.dll > nul || echo > nul
+	del aimg.lib > nul || echo > nul
+	del aimg.exp > nul || echo > nul
+	del $(OBJECTS) > nul || echo > nul
+	del *.pdb > nul || echo > nul
+	del *.ilk > nul || echo > nul
+
