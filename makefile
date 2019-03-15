@@ -4,7 +4,7 @@
 AIMG_ENABLE_PNG?=y
 AIMG_ENABLE_JPG?=y
 
-CC=gcc
+CC?=gcc
 AR?=ar
 RANLIB?=ranlib
 LINKER?=$(CC)
@@ -27,13 +27,18 @@ LIBS+=-ljpeg
 
 all: libaimg.so libaimg.a
 
-libaimg.so: $(OBJECTS)
-	$(LINKER) $(OBJECTS) $(LIBS) $(LINKFLAGS) $(SHAREDFLAG) ../bufferfile/libbufferfile.a -o libaimg.so
+libaimg.so: $(OBJECTS) build_bufferfile
+	$(LINKER) $(OBJECTS) $(LIBS) $(LINKFLAGS) $(SHAREDFLAG) bufferfile/libbufferfile.a -o libaimg.so
 
 libaimg.a: $(OBJECTS)
 	$(AR) rc x.a $(OBJECTS)
 	$(RANLIB) x.a
 	mv x.a libaimg.a
 
+build_bufferfile:
+	$(MAKE) -C bufferfile
+
 clean:
 	rm *.a *.o *.so || true
+
+.PHONY: all clean build_bufferfile

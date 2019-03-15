@@ -32,12 +32,11 @@
 #else
 #ifdef __CYGWIN__
 #define AIMG_CCALL __cdecl
-#elif defined __GNUC__
-#define AIMG_CCALL __attribute__((cdecl))
 #else
 #define AIMG_CCALL
 #endif
-#define AIMG_API(X) X AIMG_FASTCALL
+#define AIMG_FASTCALL
+#define AIMG_API(X) X AIMG_CCALL
 #endif
 
 #endif /* AIMG_EXPORT_H */
